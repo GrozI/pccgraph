@@ -8,36 +8,7 @@
 
 #include <stdio.h>
 #include <string.h>
-
-int nbligne(char *fic) { FILE* fp; int c=0; char flag=0;
-    if ( (fp=fopen(fic,"rt"))==NULL) return 0;
-    else
-        while (!feof(fp))
-            if (fgetc(fp)=='\n') {if (flag) c++; flag=0;}
-            else flag=1;
-    fclose(fp);
-    return c;
-}
-
-int lecture(FILE* fp, char* mot) {
-    char inter[512];
-    int i,j;
-    if (fscanf(fp,"%[^\n -]s",mot)==EOF) return 0;
-    fscanf(fp,"%*c");
-    for (i=j=0; mot[i]; i++)
-        if (!ispunct(mot[i])) inter[j++]=mot[i];
-        else if (mot[i]=='\'') j=0;
-    inter[j]=0;
-    strcpy(mot,inter);
-    return 1;
-}
-
-int lectureLigneDico(char* mot, int n, FILE *fp) {
-    if (fgets(mot,n,fp)==NULL) return 0;
-    if (mot[strlen(mot)-1]<' ') mot[strlen(mot)-1]=0;
-    return 1;
-}
-
+#include "pccgraph.h"
 
 Liste creer_liste(void)
 {
@@ -47,18 +18,18 @@ int est_vide(Liste L)
 {
     return !L;
 }
-/*void visualiser_liste(Liste L)
+void visualiser_liste(Liste L)
 {
     Liste p;
     p=L;
     while(!est_vide(p))
     {
-//        affiche(&p->carte);
+        printf("%u %u %lf %s",p->arc.pred,p->arc.dest,p->arc.poids,p->arc.line);
         p=p->suiv;
     }
     
 }
-*/
+
 Liste ajout_tete(Arc a,Liste L)
 {
     Liste p;
@@ -99,60 +70,18 @@ Liste ajout_queue(Arc a,Liste L)
     p->suiv=l;
     return L;
 }
-/*
-Liste supprimen(int n, Liste L)
-{
-    Liste p,l;
-    p=L;
-    int i;
-    if(est_vide(L)) return L;
-    if(n==1) return supprimer_tete(L);
-    for(i=1;i<n-1;i++)
-    {
-        if(est_vide(p->suiv))
-        {
-            printf("Fin de la liste");
-            return L;
-        }
-        p=p->suiv;
-    }
-    if(p->suiv==NULL)
-    {
-        printf("Fin de la liste");
-        return L;
-    }
-    l=p;
-    l=(l->suiv)->suiv;
-    free(p->suiv);
-    p->suiv=l;
-    return L;
-}
-
-Liste concat(Liste L1, Liste L2)
-{
-    Liste l;
-    l=L2;
-    while(!est_vide(l))
-    {
-        L1=ajout_queue(l->carte,L1);
-        l=l->suiv;
-    }
-    return L1;
-}
-Liste copie(Liste L)
-{
-    Liste p=NULL,l=L;
-    while(!est_vide(l))
-    {
-        p=ajout_queue(l->carte,p);
-        l=l->suiv;
-    }
-    return p;
-}
 
 
-*/
-#include "pccgraph.h"
+
+
+
+
+
+
+
+
+
+
 graphe nouveau_graphe(unsigned int nX,unsigned int nA)
 {
     graphe g;
@@ -177,9 +106,8 @@ void visualiser_sommets(Sommets* s)
 {
     Sommets* p;
     p=s;
-    printf(" %lf %s %d   ",p->poids,p->station,p->No);
-  
-	}
+    printf(" %lf %s %u",p->poids,p->station,p->No);
+}
 
 
 
@@ -249,7 +177,7 @@ void graphe_ecrit_poids_arc(graphe g, unsigned int u, unsigned int v, double val
         s=g->sommets;
         if(s!=NULL)
         {
-            l=(s+u)->arc;//??????????????????????????????????????????????????
+            l=(s+u)->arc;
             while(i!=v && l->suiv!=NULL)
             {
 	         p=p->suiv;
@@ -297,6 +225,18 @@ double graphe_lit_poids_arc(graphe g, unsigned int u, unsigned int v)
         return -1;
     }
 }
+void graphe_ajoute_arc(graphe g, unsigned int u, unsigned int v, double val)
+{
+	Liste l;
+	Arc a;
+	a.poids=val;
+	a.pred=u;
+	a.dest=v;
+		
+	l->arc=a;
+	
+	ajout_queue(a,g->(sommets+u)->arc);	
+}
 
 graphe lit_graphe(char * fichier);
 {
@@ -323,5 +263,5 @@ graphe lit_graphe(char * fichier);
     	graphe_ajoute_arc(g,prec,dest,pds);
     }
 }
-void graphe_ajoute_arc(graphe g, unsigned int u, unsigned int v, double val);
+
 double graphe_pcc(graphe g, unsigned int u, unsigned int v);
