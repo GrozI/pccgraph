@@ -265,3 +265,44 @@ graphe lit_graphe(char * fichier);
 }
 
 double graphe_pcc(graphe g, unsigned int u, unsigned int v);
+{
+    int i,j;
+    Liste p;
+    Sommet s;
+    for(i=0;i<g->nX;i++)
+    {
+    	((g->sommets)+i)->poids=65535;
+    }
+    *(g->sommets)->poids=0;
+    for(i=0;i<g->nX;i++)
+    {
+    	for(j=0;j<g->nX;j++)
+    	{
+    	    s=(g->sommets)+j;
+    	    p=s.arc;
+    	    while(!est_vide(p))
+    	    {
+    	        if(s->poids+p->poids<((g->sommets)+(p->dest))->poids)
+    	        {
+    	            ((g->sommets)+(p->dest))->poids=s->poids+p->poids;
+    	        }
+                p=p->suiv;
+    	    }
+    	}
+    }
+    for(i=0;i<g->nX;i++)
+    {
+    	s=(g->sommets)+j;
+    	p=s.arc;
+        while(!est_vide(p))
+	{
+            if(s->poids+p->poids<((g->sommets)+(p->dest))->poids)
+   	        {
+    	            printf("circuit négatif dans le graphe, chemin impossible");
+    	            return 0;
+    	        }
+            p=p->suiv;
+    	}
+    }
+    return 1;
+}
