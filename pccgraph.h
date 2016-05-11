@@ -25,6 +25,7 @@ typedef struct {
 typedef struct {
     double poids;
     char station;
+    unsigned int pere;
     unsigned int No;
     Liste* arc;
     
