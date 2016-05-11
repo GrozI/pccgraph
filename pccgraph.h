@@ -33,6 +33,7 @@ typedef struct {
 typedef struct {
     double poids;
     char line;
+    int file;
     unsigned int pred;
     unsigned int dest;
 } Arc;
