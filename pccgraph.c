@@ -240,6 +240,7 @@ void graphe_ajoute_arc(graphe g, unsigned int u, unsigned int v, double val)
 
 graphe lit_graphe(char * fichier);
 {
+    unsigned char* mot;
     int i=0;
     Sommets som;
     Arc a;
@@ -250,7 +251,7 @@ graphe lit_graphe(char * fichier);
     fscanf(fp,"%u %u",&nX,&nA);
     graphe g;
     g=nouveau_graphe(nX, nA);
-    fgets(fp);
+    fgets(mot,511,fp);
     for(i=0;i<nX;i++)
     {
     	som=(g->(sommets+i));
@@ -273,12 +274,11 @@ double graphe_pcc(graphe g, unsigned int u, unsigned int v);
     {
     	((g->sommets)+i)->poids=65535;
     }
-    *(g->sommets)->poids=0;
+    (g->sommets)->poids=0;
     for(i=0;i<g->nX;i++)
     {
-    	for(j=0;j<g->nX;j++)
-    	{
-    	    s=(g->sommets)+j;
+    	
+    }
     	    p=s.arc;
     	    while(!est_vide(p))
     	    {
