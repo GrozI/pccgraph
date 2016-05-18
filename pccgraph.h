@@ -11,17 +11,21 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
- 
-
-
-
-
 typedef struct {
-    unsigned int nX;
-    unsigned int nA;
-    Sommets* sommets;
-}* graphe;
+    double poids;
+    char line;
+
+    unsigned int pred;
+    unsigned int dest;
+} Arc;
+ 
+struct liste {
+ Arc arc;
+ struct liste *suiv;};
+ typedef struct liste * Liste;
+
+
+
 typedef struct {
     double poids;
     char station;
@@ -31,24 +35,21 @@ typedef struct {
     Liste* arc;
     
 } Sommets;
-typedef struct {
-    double poids;
-    char line;
 
-    unsigned int pred;
-    unsigned int dest;
-} Arc;
-struct liste {
- Arc arc;
- struct liste *suiv;};
- typedef struct liste * Liste;
+typedef struct {
+    unsigned int nX;
+    unsigned int nA;
+    Sommets* sommets;
+}* graphe;
+
+
 
 Liste creer_liste(void);
 int est_vide(Liste L);
 void visualiser_liste(Liste L);
-Liste ajout_tete(CARTE c,Liste L);
+Liste ajout_tete(Arc a,Liste L);
 Liste supprimer_tete(Liste L);
-Liste ajout_queue(CARTE c,Liste L);
+Liste ajout_queue(Arc a,Liste L);
 
 
 graphe nouveau_graphe(unsigned int nX,unsigned int nA);
