@@ -13,10 +13,8 @@
 #include <stdlib.h>
 typedef struct {
     double poids;
-    char line;
-
-    unsigned int pred;
-    unsigned int dest;
+    int pred;
+    int dest;
 } Arc;
  
 struct liste {
@@ -28,17 +26,18 @@ struct liste {
 
 typedef struct {
     double poids;
-    char station;
-    unsigned int pere;
+    char station[511];
+    int pere;
+    char line[511];
     int file;
-    unsigned int No;
-    Liste* arc;
+    int No;
+    Liste arc;
     
 } Sommets;
 
 typedef struct {
-    unsigned int nX;
-    unsigned int nA;
+    int nX;
+    int nA;
     Sommets* sommets;
 }* graphe;
 
@@ -52,19 +51,19 @@ Liste supprimer_tete(Liste L);
 Liste ajout_queue(Arc a,Liste L);
 
 
-graphe nouveau_graphe(unsigned int nX,unsigned int nA);
+graphe nouveau_graphe( int nX, int nA);
 void visualiser_sommets(Sommets* s);
 void affiche_graphe(graphe g);
 void detruit_graphe(graphe g);
-void graphe_ecrit_nA(graphe g, unsigned int nA);
-void graphe_ecrit_nX(graphe g, unsigned int nX);
-unsigned int graphe_lit_nA(graphe g);
-unsigned int graphe_lit_nX(graphe g);
-void graphe_ecrit_poids(graphe g, unsigned int u, double val);
-double graphe_lit_poids(graphe g, unsigned int u);
-void graphe_ecrit_poids_arc(graphe g, unsigned int u, unsigned int v, double val);
-double graphe_lit_poids_arc(graphe g, unsigned int u, unsigned int v);
-void graphe_ajoute_arc(graphe g, unsigned int u, unsigned int v, double val);
-graphe lit_graphe(char * fichier);
-double graphe_pcc(graphe g, unsigned int u, unsigned int v);
+void graphe_ecrit_nA(graphe g, int nA);
+void graphe_ecrit_nX(graphe g, int nX);
+int graphe_lit_nA(graphe g);
+int graphe_lit_nX(graphe g);
+void graphe_ecrit_poids(graphe g, int u, double val);
+double graphe_lit_poids(graphe g, int u);
+void graphe_ecrit_poids_arc(graphe g, int u, int v, double val);
+double graphe_lit_poids_arc(graphe g, int u, int v);
+void graphe_ajoute_arc(graphe g, int u, int v, double val);
+graphe lit_graphe(FILE* fp);
+double graphe_pcc(graphe g, int u, int v);
 #endif /* pccgraph_h */
