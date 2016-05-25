@@ -32,7 +32,6 @@ typedef struct {
     int file;
     int No;
     Liste arc;
-    
 } Sommets;
 
 typedef struct {
@@ -52,7 +51,7 @@ Liste ajout_queue(Arc a,Liste L);
 
 
 graphe nouveau_graphe( int nX, int nA);
-void visualiser_sommets(Sommets* s);
+void visualiser_sommets(Sommets s);
 void affiche_graphe(graphe g);
 void detruit_graphe(graphe g);
 void graphe_ecrit_nA(graphe g, int nA);
