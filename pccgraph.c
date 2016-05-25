@@ -111,22 +111,22 @@ graphe nouveau_graphe( int nX, int nA)
     return g;
 }
 
-void visualiser_sommets(Sommets* s)
+void visualiser_sommets(Sommets s)
 {
-    Sommets* p;
-    p=s;
-    printf(" %lf %s %d",p->poids,p->station,p->No);
+    printf("%lf %s %d",s.poids,s.station,s.No);
 }
 
 
 
 void affiche_graphe(graphe g){
 	int i;
+        printf("%d %d",g->nX,g->nA);
 	for(i=0;i<(g->nX);i++){
-		visualiser_sommets(g->sommets+i);
+		visualiser_sommets(*((g->sommets)+i));
 		}
 	for(i=0;i<(g->nX);i++){
-		visualiser_liste((g->sommets+i)->arc);
+		visualiser_liste(((g->sommets)+i)->arc);
+printf("a");
 		}
 	}
 
@@ -248,8 +248,8 @@ void graphe_ajoute_arc(graphe g, int u,int v, double val)
 	a.poids=val;
 	a.pred=u;
 	a.dest=v;
-	
-	ajout_tete(a,(g->sommets+u)->arc);	
+	printf("%lf %d %d  coucoucoucou\n", a.poids,a.pred,a.dest);
+	ajout_tete(a,((g->sommets)+u)->arc);	
 }
 
 
@@ -261,22 +261,27 @@ graphe lit_graphe(FILE* fp)//dans le main ouvrir fichier
     int nX,nA,No,prec,dest;
     double coa,cob,pds;
     fscanf(fp,"%d %d",&nX,&nA);
+    fgets(mot,511,fp);
+    printf("%d %d",nX,nA);
     graphe g;
     g=nouveau_graphe(nX, nA);
     fgets(mot,511,fp);
+    printf("%s",mot);
     for(i=0;i<nX;i++)
     {
         Liste t;
-
-    	som=*(g->sommets+i);
-
         t=som.arc;
     	fscanf(fp,"%d %lf %lf %s %s",&No,&coa,&cob,som.line,som.station);
     	som.No=No;
+        printf("%d %lf %lf %s %s",No,coa,cob,som.line,som.station);
+        fgets(mot,511,fp);
+    	*(g->sommets+i)=som;
     }
     fgets(mot,511,fp);
-    while(fscanf(fp,"%d %d %lf",&prec,&dest,&pds)!=0)
+    for(i=0;i<nA;i++)
     {
+        fscanf(fp,"%d %d %lf",&prec,&dest,&pds);
+        fgets(mot,511,fp);
     	graphe_ajoute_arc(g,prec,dest,pds);
     }
     return g;
@@ -365,10 +370,13 @@ double graphe_pcc(graphe g, int u, int v)
 int main()
 {
     FILE* fp=fopen("/users/phelma/phelma2015/grozir/Bureau/graph/metro.txt","r");
+    if(fp==NULL) return 0;
     graphe g;
-//    g=nouveau_graphe(769,1939);
-  //  g->sommets->poids=5;
+
+    
     g=lit_graphe(fp);
+    g->sommets->poids=5;
     printf("proof\n");
+    affiche_graphe(g);
     return 1;
 }
