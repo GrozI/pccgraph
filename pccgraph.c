@@ -9,7 +9,68 @@
 #include <stdio.h>
 #include <string.h>
 #include "pccgraph.h"
-#include "file.h"
+
+
+File creer_file(void){
+	return NULL ;}
+
+int file_vide(File f){
+	return !f;}
+
+
+
+File enfiler(Sommets s, File f)
+{
+	File d=calloc(1,sizeof(*d));
+	s.file=1;
+	d->sommets=s;
+	if(file_vide(f)) d->suiv=NULL;
+	else{
+		d->suiv=f;
+	    }
+	return d ;
+}
+	
+Sommets defiler(File* f)
+{ 
+	Sommets s ;
+	File g=*f;
+	if((*f)->suiv==NULL){
+		s=(*f)->sommets;
+		free(f);
+		*f=NULL;
+		return s ;}
+	else{
+		g=g->suiv;
+		s=g->sommets;
+		(*f)->suiv=g->suiv;
+		free(g);
+		return s ;}
+}
+
+
+
+
+void visualiser_file(File L)
+{
+    File p;
+    p=L;
+    while(!file_vide(p))
+    {
+        printf("partir de %s  prendre la ligne   %s \n",p->sommets.station,p->sommets.line);
+        p=p->suiv;
+    }
+    
+}
+
+
+
+
+
+
+
+
+
 Liste creer_liste(void)
 {
     return NULL;
@@ -24,7 +85,7 @@ void visualiser_liste(Liste L)
     p=L;
     while(!est_vide(p))
     {
-        printf("%d %d %lf",p->arc.pred,p->arc.dest,p->arc.poids);
+        printf("%d   %d    %lf {%p -> %p}\n",p->arc.pred,p->arc.dest,p->arc.poids,p,p->suiv);
         p=p->suiv;
     }
     
@@ -104,29 +165,27 @@ graphe nouveau_graphe( int nX, int nA)
     }
     for(i=0;i<nX;i++)
     {
-        som=*((g->sommets)+i);
-        L=som.arc;
-        L=calloc(1,sizeof(*L));
-    }
+        g->sommets[i].arc = creer_liste();
+	//printf( "\nTOTOR SAYS: %p\n", g->sommets[i].arc );
+   }
     return g;
 }
 
 void visualiser_sommets(Sommets s)
 {
-    printf("%lf %s %d",s.poids,s.station,s.No);
+    printf("%d     %lf   %s\n",s.No,s.poids,s.station);
 }
 
 
 
 void affiche_graphe(graphe g){
 	int i;
-        printf("%d %d",g->nX,g->nA);
+        printf("%d %d\n",g->nX,g->nA);
 	for(i=0;i<(g->nX);i++){
 		visualiser_sommets(*((g->sommets)+i));
 		}
 	for(i=0;i<(g->nX);i++){
 		visualiser_liste(((g->sommets)+i)->arc);
-printf("a");
 		}
 	}
 
@@ -197,7 +256,7 @@ void graphe_ecrit_poids_arc(graphe g, int u, int v, double val)
                  i=(l->arc).pred;
             }
             if(i==v) (l->arc).poids=val;
-            else printf("station d'arrivée pas existante v trop grand ecriture");
+            else printf("station d'arrivÃ©e pas existante v trop grand ecriture");
         }
         else printf("tableau de sommets non existant");
     }
@@ -248,8 +307,8 @@ void graphe_ajoute_arc(graphe g, int u,int v, double val)
 	a.poids=val;
 	a.pred=u;
 	a.dest=v;
-	printf("%lf %d %d  coucoucoucou\n", a.poids,a.pred,a.dest);
-	ajout_tete(a,((g->sommets)+u)->arc);	
+	//printf("%lf %d %d\n", a.poids,a.pred,a.dest);
+	((g->sommets)+u)->arc=ajout_tete(a,((g->sommets)+u)->arc);	
 }
 
 
@@ -257,25 +316,21 @@ graphe lit_graphe(FILE* fp)//dans le main ouvrir fichier
 {
     char mot[511];
     int i=0;
-    Sommets som;
-    int nX,nA,No,prec,dest;
+    int nX,nA,prec,dest;
     double coa,cob,pds;
     fscanf(fp,"%d %d",&nX,&nA);
     fgets(mot,511,fp);
-    printf("%d %d",nX,nA);
+    //printf("%d %d",nX,nA);
     graphe g;
     g=nouveau_graphe(nX, nA);
     fgets(mot,511,fp);
-    printf("%s",mot);
+    //printf("%s",mot);
     for(i=0;i<nX;i++)
     {
-        Liste t;
-        t=som.arc;
-    	fscanf(fp,"%d %lf %lf %s %s",&No,&coa,&cob,som.line,som.station);
-    	som.No=No;
-        printf("%d %lf %lf %s %s",No,coa,cob,som.line,som.station);
-        fgets(mot,511,fp);
-    	*(g->sommets+i)=som;
+    	fscanf(fp,"%d %lf %lf %s",&(g->sommets[i].No),&coa,&cob,g->sommets[i].line);
+        fgets(g->sommets[i].station,511,fp);
+        //printf("%d %lf %lf %s %s",g->sommets[i].No,coa,cob,g->sommets[i].line,g->sommets[i].station);
+
     }
     fgets(mot,511,fp);
     for(i=0;i<nA;i++)
@@ -320,7 +375,7 @@ graphe lit_graphe(FILE* fp)//dans le main ouvrir fichier
 	{
             if(s->poids+p->poids<((g->sommets)+(p->dest))->poids)
    	        {
-    	            printf("circuit négatif dans le graphe, chemin impossible");
+    	            printf("circuit nÃ©gatif dans le graphe, chemin impossible");
     	            return 0;
     	        }
             p=p->suiv;
@@ -329,20 +384,24 @@ graphe lit_graphe(FILE* fp)//dans le main ouvrir fichier
     return 1;
 }*/
 
-double graphe_pcc(graphe g, int u, int v)
+File graphe_pcc(graphe g, int u, int v)
 {
     int i;
     Liste p;
     File f=creer_file();
+    if(u==v)
+    {
+        return NULL;
+    }
     Sommets s;
-    enfiler(*(g->sommets),f);
+    enfiler(g->sommets[u],f);
     for(i=0;i<g->nX;i++)
     {
-    	((g->sommets)+i)->poids=65535;
-        ((g->sommets)+i)->file=0;
+    	g->sommets[i].poids=65535;
+        g->sommets[i].file=0;
     }
     
-    (g->sommets+u)->poids=0;
+    g->sommets[u].poids=0;
     for(i=0;i<g->nX;i++)
     {
         while(!file_vide(f))
@@ -355,13 +414,23 @@ double graphe_pcc(graphe g, int u, int v)
     	        {
     	            ((g->sommets)+(p->arc.dest))->poids=s.poids+p->arc.poids;
                     (g->sommets[p->arc.dest]).pere=p->arc.pred;
-                    if(g->sommets[p->arc.dest].file==0) enfiler(g->sommets[p->arc.dest],f);
+                    if(g->sommets[p->arc.dest].file==0) f=enfiler(g->sommets[p->arc.dest],f);
     	        }
                 p=p->suiv;
     	    }
         }
     }
-    return 1;
+    i=0;
+    f=creer_file();
+    while(v!=u)
+    {
+        
+        f=enfiler((g->sommets[v]),f);
+        v=g->sommets[v].pere;
+        i++;
+    }
+    f=enfiler(g->sommets[u],f);
+    return f;
 }
 
 
@@ -375,8 +444,8 @@ int main()
 
     
     g=lit_graphe(fp);
-    g->sommets->poids=5;
-    printf("proof\n");
-    affiche_graphe(g);
+    //affiche_graphe(g);
+    
+    visualiser_file(graphe_pcc(g,0,10));
     return 1;
 }
