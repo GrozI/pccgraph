@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 typedef struct {
     double poids;
     int pred;
@@ -40,6 +41,21 @@ typedef struct {
     Sommets* sommets;
 }* graphe;
 
+struct maillon {
+ Sommets sommets;
+ struct maillon *suiv;};
+
+
+typedef struct maillon * File;
+
+File creer_file(void);
+
+int file_vide(File f);
+
+File enfiler(Sommets s, File f);
+	
+Sommets defiler(File *f);
+
 
 
 Liste creer_liste(void);
@@ -64,5 +80,5 @@ void graphe_ecrit_poids_arc(graphe g, int u, int v, double val);
 double graphe_lit_poids_arc(graphe g, int u, int v);
 void graphe_ajoute_arc(graphe g, int u, int v, double val);
 graphe lit_graphe(FILE* fp);
-double graphe_pcc(graphe g, int u, int v);
+File graphe_pcc(graphe g, int u, int v);
 #endif /* pccgraph_h */
