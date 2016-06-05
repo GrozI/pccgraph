@@ -114,33 +114,6 @@ Liste supprimer_tete(Liste L)
     return NULL;
 }
 
-Liste ajout_queue(Arc a,Liste L)
-{
-    Liste p,l;
-    p=L;
-    if(est_vide(L)) return ajout_tete(a,L);
-    while(!est_vide(p->suiv))
-    {
-        p=p->suiv;
-    }
-    l=calloc(1,sizeof(*l));
-    l->arc.poids = a.poids;
-    l->arc.pred = a.pred;
-    l->arc.dest = a.dest;
-    l->suiv=NULL;
-    p->suiv=l;
-    return L;
-}
-
-
-
-
-
-
-
-
-
-
 
 
 graphe nouveau_graphe( int nX, int nA)
