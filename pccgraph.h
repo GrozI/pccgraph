@@ -63,7 +63,7 @@ int est_vide(Liste L);
 void visualiser_liste(Liste L);
 Liste ajout_tete(Arc a,Liste L);
 Liste supprimer_tete(Liste L);
-Liste ajout_queue(Arc a,Liste L);
+
 
 
 graphe nouveau_graphe( int nX, int nA);
